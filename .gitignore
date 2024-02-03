@@ -108,3 +108,4 @@ ipython_config.py
 .DS_STORE
 .idea/
 node_modules
+.env
