@@ -2,6 +2,7 @@ import { AxiosError } from "axios";
 import { NextRequest, NextResponse } from "next/server"
 import { GoogleAdapter } from "./google-adapter";
 import { NearbyMarkets } from "@/models/market";
+import { Repository } from "./repository";
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
@@ -25,8 +26,9 @@ export async function GET(request: NextRequest) {
 }
 
   export async function POST(request: NextRequest) {
-    const body = await request.json();
+    const response = await new Repository().getAll();
+
     return NextResponse.json({
-      message: body
+      message: response
     })
   }
