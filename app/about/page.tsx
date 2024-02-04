@@ -55,7 +55,7 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline text-start"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">Learn more on food waste</a></button>
+          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline text-start"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">Learn more about food waste</a></button>
         </div>
 
         <div className="flex">
