@@ -35,7 +35,7 @@ export default function About() {
 
 
       <div className="bg-chiffon">
-        <h1 className="text-5xl text-sacramento font-bold mt-16 mx-8"> Autres ressources</h1>
+        <h1 className="text-5xl text-sacramento font-bold mt-16 mx-8">Other resources</h1>
 
         <div className="flex">
           <button className="mx-8 mt-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://lepanierbleu.ca/">Le panier bleu</a></button>
