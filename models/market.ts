@@ -1,17 +1,18 @@
+
 export interface NearbyMarkets {
-    places: Market[];
+  places: Market[];
 }
 
 export interface Market {
-    types: string[];
-    location: {
-        lat: number;
-        lng: number;
-    },
-    distance: number;
-    formattedAddress: string;
-    displayName: {
-        text: string;
-        languageCode: string;
-    }
+  types: string[];
+  location: {
+    lat: number;
+    lng: number;
+  },
+  formattedAddress: string;
+  displayName: {
+    text: string;
+    languageCode: string;
+  }
+  distance: number;
 }
