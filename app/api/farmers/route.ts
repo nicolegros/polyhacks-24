@@ -9,7 +9,13 @@ export async function POST(request: NextRequest) {
   //   return NextResponse.json({ error: 'Invalid data format' }, { status: 400 });
   // }
 
-  const response = repo.create(body)
+    const revisedBody = {
+        ...body, displayName: {
+            text: body.name,
+            languageCode: "en"
+        }
+    }
+    const response = repo.create(revisedBody)
   return NextResponse.json(response)
 }
 
