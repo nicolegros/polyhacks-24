@@ -29,7 +29,7 @@ export default function About() {
           <span className="text-8xl">60%</span> of food waste occurs during production
         </div>
         <div className="aspect-square bg-sacramento w-full h-full md:ml-8 p-4 flex justify-center items-center flex-col text-2xl text-center text-salmon">
-          <span className="text-8xl">56.5<span className="text-6xl">M</span></span>tons of CO2 emissions created annually
+          <span className="lg:text-8xl text-7xl">56.5<span className="lg:text-6xl text-5xl">M</span></span>tons of CO2 emissions created annually
         </div>
       </div>
 
