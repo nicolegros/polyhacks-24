@@ -33,10 +33,9 @@ const usePostToServerMutation = () => {
 };
 
 
-
-
 const Producer = () => {
     const location = useGeolocation();
+
     const [foods, setFoods] = useState<string[]>([]); 
     
     const [foodInput, setFoodInput] = useState('');
@@ -55,51 +54,58 @@ const Producer = () => {
             languageCode: 'en',
         },
     });
-
     const mapRef = useRef(null);
     const geocoderRef = useRef<google.maps.Geocoder | null>(null);
+    const markerRef = useRef<google.maps.Marker | null>(null);
+    formData.location= { lat:location.latitude, lng:location.longitude };
+
 
     const { isLoaded } = useJsApiLoader({
         googleMapsApiKey: "AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU"
     });
 
-    useEffect(() => {
-        if (isLoaded && mapRef.current) {
-            const map = new google.maps.Map(mapRef.current, {
-                center: { lat: location.latitude, lng: location.longitude },
-                zoom: 11,
-            });
+   useEffect(() => {
+    if (isLoaded && mapRef.current) {
+        const map = new google.maps.Map(mapRef.current, {
+            center: { lat: location.latitude, lng: location.longitude },
+            zoom: 11,
+        });
 
-            const geocoder = new google.maps.Geocoder();
-            geocoderRef.current = geocoder;
-
-            const marker = new google.maps.Marker({
+        const geocoder = new google.maps.Geocoder();
+        geocoderRef.current = geocoder;
+        
+        if (!markerRef.current) {
+            markerRef.current = new google.maps.Marker({
                 position: { lat: location.latitude, lng: location.longitude },
                 map: map,
             });
-
-            map.addListener('click', (event: google.maps.MapMouseEvent) => {
-                if (event.latLng) {
-                    geocoder.geocode({ location: event.latLng }, (results, status) => {
-                        if (status === 'OK' && results && results[0]) {
-                            const lat = event.latLng.lat();
-                            const lng = event.latLng.lng();
-            
-                            setFormData(currentFormData => ({
-                                ...currentFormData,
-                                formattedAddress: results[0].formatted_address,
-                                location: { lat, lng }
-                            }));
-                            if (marker) {
-                                marker.setPosition(event.latLng);
-                            }
-                        }
-                    });
-                }
-            });
-            
+        } else {
+            markerRef.current.setPosition({ lat: location.latitude, lng: location.longitude });
+            markerRef.current.setMap(map);
         }
-    }, [isLoaded, location, formData.location]);
+
+        map.addListener('click', (event: google.maps.MapMouseEvent) => {
+            if (event.latLng) {
+                geocoder.geocode({ location: event.latLng }, (results, status) => {
+                    if (status === 'OK' && results && results[0]) {
+                        const lat = event.latLng.lat();
+                        const lng = event.latLng.lng();
+        
+                        setFormData(currentFormData => ({
+                            ...currentFormData,
+                            formattedAddress: results[0].formatted_address,
+                            location: { lat, lng }
+                        }));
+
+                        if (markerRef.current) {
+                            markerRef.current.setPosition(event.latLng);
+                        }
+                    }
+                });
+            }
+        });
+    }
+}, [isLoaded, location.latitude, location.longitude]);
     
     
     const handleFoodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -120,19 +126,52 @@ const Producer = () => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
+
     };
+
+    const resetForm = () => {
+        setFormData({
+            types: [],
+            product: [],
+            location: {
+                lat: 0,  
+                lng: 0, 
+            },
+            formattedAddress: '',
+            email: '',
+            name: '',
+            displayName: {
+                text: '',
+                languageCode: '', 
+            },
+        });
+    };
+    
+
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log('submitting', formData);
+        resetForm();
     };
+
+
+    const handleDropdownChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedType = e.target.value;
+        setFormData(currentFormData => ({
+            ...currentFormData,
+            types: selectedType ? [selectedType] : []
+        }));
+    };
+    
+    
 
     return (
         <form onSubmit={handleSubmit}>
             <h1>Tell us more about you!</h1>
             <label>
                 Name:
-                <input type="text" name="name" value={formData.name} onChange={handleChange} />
+                <input type="text" name="name" value={formData.name} onChange={handleChange} required/>
             </label>
             <br />
             <label>
@@ -142,16 +181,27 @@ const Producer = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    required
+
                 />
             </label>
             <br />
             <label>
                 Address:
-                <input type="text" name="formattedAddress" value={formData.formattedAddress} onChange={handleChange} />
+                <input type="text" name="formattedAddress" value={formData.formattedAddress} onChange={handleChange}required />
+            </label>
+            <label>
+                Type:
+                <select name="types" value={formData.types[0] || ''} onChange={handleDropdownChange}required>
+                    <option value="">Select type</option>
+                    <option value="greenhouse">Greenhouse</option>
+                    <option value="farm">Farm</option>
+                    <option value="market">Market</option>
+                </select>
+
             </label>
             <br />
-            <input 
+            <input
                 type="text" 
                 value={foodInput} 
                 onChange={handleFoodChange} 
