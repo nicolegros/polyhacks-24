@@ -15,7 +15,6 @@ export class GoogleAdapter {
   }
 
   async getNearbyMarkets(latitude: number, longitude: number, searchRadius: number): Promise<NearbyMarkets> {
-    console.log(latitude, longitude, searchRadius)
     const response = await axios.post('https://places.googleapis.com/v1/places:searchNearby',
       {
         includedTypes: [
