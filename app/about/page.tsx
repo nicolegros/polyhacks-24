@@ -38,7 +38,7 @@ export default function About() {
         <h1 className="text-5xl text-sacramento font-bold mt-16 mx-8">Other resources</h1>
 
         <div className="flex">
-          <button className="mx-8 mt-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://lepanierbleu.ca/">Le panier bleu</a></button>
+          <button className="mx-8 mt-8 text-lg text-sacramento font-bold hover:text-tangerine underline"><a href="https://lepanierbleu.ca/">Le panier bleu</a></button>
         </div>
 
         <div className="flex">
@@ -47,7 +47,7 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <button className="mx-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://www.toogoodtogo.com">Too Good To Go</a></button>
+          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline"><a href="https://www.toogoodtogo.com">Too Good To Go</a></button>
         </div>
         <div className="flex">
           <p className="px-8 pb-8 text-sacramento text-lg">Too Good To Go has an ambitious goal: to inspire and empower everyone to fight food waste. The problem is simple: too much food is being thrown away. Rescue unsold fresh food from an untimely fate at your favourite spots. Download the app today, reduce food waste while saving your wallet!
@@ -55,7 +55,7 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <button className="mx-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">En apprendre plus sur le gaspillage alimentaire</a></button>
+          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">En apprendre plus sur le gaspillage alimentaire</a></button>
         </div>
 
         <div className="flex">
