@@ -1,6 +1,6 @@
 'use client';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, Marker, useJsApiLoader, MarkerClusterer } from "@react-google-maps/api";
 import Link from 'next/link';
 import { useState } from 'react';
 import { Market } from '@/models/market';
@@ -47,19 +47,19 @@ function Map() {
       throw new Error('Google Network response was not ok');}
     const dataGoogle = await responseGoogle.json();
     
-    const responseMongo = await fetch(`/api/farmers`);
-    if (!responseMongo.ok) {
-      throw new Error('Mongo Network response was not ok');}
-    const dataMongo = await responseMongo.json();
+    // const responseMongo = await fetch(`/api/farmers`);
+    // if (!responseMongo.ok) {
+    //   throw new Error('Mongo Network response was not ok');}
+    // const dataMongo = await responseMongo.json();
     
-    const data = {
-      places: [...dataGoogle.places, ...dataMongo.places]
-    };
-    const filterPlaces = (places: Market[]) => {
-      return places.filter((place) => place.location && place.location.lat !== 0 && place.location.lng !== 0);
-    };
-    data.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
-    return data;
+    // const data = {
+    //   places: [...dataGoogle.places, ...dataMongo.places]
+    // };
+    // const filterPlaces = (places: Market[]) => {
+    //   return places.filter((place) => place.location && place.location.lat !== 0 && place.location.lng !== 0);
+    // };
+    dataGoogle.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
+    return dataGoogle;
   };
 
 
@@ -115,14 +115,19 @@ function Map() {
             center={location ? { lat: location.latitude, lng: location.longitude } : { lat: 0, lng: 0 }}
             zoom={13}
           >
-            {mensenData?.places.map((market: Market, index: number) => (
-              <Marker
-                key={index}
-                position={market.location}
-                label={market.displayName.text}
-                onClick={() => setSelectedPlace(market)}
-              />
-            ))}
+            <MarkerClusterer>
+              {(clusterer) =>
+                mensenData?.places.map((market: Market, index: number) => (
+                  <Marker
+                    key={index}
+                    position={market.location}
+                    label={market.displayName.text}
+                    onClick={() => setSelectedPlace(market)}
+                    clusterer={clusterer}
+                  />
+                ))
+              }
+            </MarkerClusterer>
 
             {selectedPlace && (
               <InfoWindow
