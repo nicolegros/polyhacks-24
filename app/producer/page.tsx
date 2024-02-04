@@ -7,7 +7,7 @@ import {useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters}
 import {Badge, Button, Input, InputGroup, InputRightAddon, Select, useToast} from "@chakra-ui/react";
 
 const postToServer = async (data: Producer): Promise<Producer> => {
-    const response = await fetch('/api/endpoint', {
+    const response = await fetch('/api/farmers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
