@@ -14,6 +14,13 @@ export class GoogleAdapter {
     }
   }
 
+  async getDistance(origin: { latitude: number; longitude: number }, destination: { latitude: number; longitude: number }): Promise<number> {
+    const response = await axios.get(`https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.latitude},${origin.longitude}&destinations=${destination.latitude},${destination.longitude}&units=metric&key=${this.apiKey}`);
+    const distance = response.data.rows[0].elements[0].distance.value;
+    return distance / 1000;
+  }
+
+
   async getNearbyMarkets(latitude: number, longitude: number, searchRadius: number): Promise<NearbyMarkets> {
     const response = await axios.post('https://places.googleapis.com/v1/places:searchNearby',
       {
@@ -39,16 +46,21 @@ export class GoogleAdapter {
         },
       })
 
-    return {
-      places: response.data.places.map((place: GoogleMarket) => {
+      const userLocation = { latitude, longitude };
+      const distancePromises = response.data.places.map(async (place: GoogleMarket) => {
+        const distance = await this.getDistance(userLocation, place.location);
         return {
-          ...place, location: {
+          ...place,
+          location: {
             lat: place.location.latitude,
             lng: place.location.longitude
-          }
-        }
-      })
-    }
+          },
+          distance: distance 
+        };
+      });
+      const placesWithDistances = await Promise.all(distancePromises);
+
+      return { places: placesWithDistances };
   }
 }
 
@@ -60,6 +72,7 @@ interface GoogleMarket {
     longitude: number;
   },
   formattedAddress: string;
+  distance: number;
   displayName: {
     text: string;
     languageCode: string;

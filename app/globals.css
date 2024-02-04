@@ -31,3 +31,9 @@ body {
     text-wrap: balance;
   }
 }
+
+.img-background {
+  background-image: url("../public/supermarket.jpg");
+  background-size: cover;
+  background-position: center center;
+}
