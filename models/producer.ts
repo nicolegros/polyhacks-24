@@ -1,3 +1,5 @@
+import {Market} from "@/models/market";
+
 export interface NearbyMarkets {
   places: Market[];
 }
