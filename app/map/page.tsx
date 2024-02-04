@@ -1,6 +1,6 @@
 'use client';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from "@react-google-maps/api";
+import { GoogleMap, InfoWindow, Marker, useJsApiLoader, MarkerClusterer } from "@react-google-maps/api";
 import Link from 'next/link';
 import { useState } from 'react';
 import { Market } from '@/models/market';
@@ -10,11 +10,6 @@ import { CiMap, CiViewTable } from 'react-icons/ci';
 
 
 
-type LocationState = {
-  latitude: number;
-  longitude: number;
-};
-
 const containerStyle = {
   width: '100%',
   height: '100%'
@@ -23,6 +18,8 @@ const containerStyle = {
 const queryClient = new QueryClient()
 
 export default function MapWrapper() {
+  const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <Map />
@@ -40,15 +37,23 @@ function Map() {
 
 
   const fetchFromServer = async (latitude: number, longitude: number) => {
-    const response = await fetch(`/api?latitude=${latitude}&longitude=${longitude}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
-    data.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
+    const responseGoogle = await fetch(`/api?latitude=${latitude}&longitude=${longitude}`);
+    if (!responseGoogle.ok) {
+      throw new Error('Google Network response was not ok');}
+    const googleFarmers = await responseGoogle.json();
 
+    const farmersResponse = await fetch(`/api/farmers`);
+    if (!farmersResponse.ok) {
+      throw new Error('Mongo Network response was not ok');}
+    const farmers = await farmersResponse.json();
+
+    const data = {
+      places: [...googleFarmers.places, ...farmers]
+    };
+    data.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
     return data;
   };
+
 
 
   const { data: mensenData } = useQuery({
@@ -97,19 +102,27 @@ function Map() {
         </div>
       ) : (
         isLoaded && (
-          <GoogleMap
+        <GoogleMap
             mapContainerStyle={containerStyle}
             center={location ? { lat: location.latitude, lng: location.longitude } : { lat: 0, lng: 0 }}
             zoom={13}
           >
+      <MarkerClusterer>
+        {(clusterer) => (
+          <>
             {mensenData?.places.map((market: Market, index: number) => (
               <Marker
                 key={index}
                 position={market.location}
                 label={market.displayName.text}
                 onClick={() => setSelectedPlace(market)}
+                clusterer={clusterer}
               />
             ))}
+          </>
+        )}
+      </MarkerClusterer>
+
 
             {selectedPlace && (
               <InfoWindow
@@ -122,10 +135,6 @@ function Map() {
                 <div>
                   <h2>{selectedPlace.displayName.text}</h2>
                   <p>{selectedPlace.formattedAddress}</p>
-                  {/*  */}
-                  <Link href={`/market/${selectedPlace.displayName.text}`} passHref>
-                    <a>More Info</a> {/* */}
-                  </Link>
                 </div>
               </InfoWindow>
             )}
