@@ -12,7 +12,6 @@ export class Repository {
         .collection("farmers")
         .find({})
         .sort({ metacritic: -1 })
-        .limit(10)
         .toArray();
       return farmers;
 
