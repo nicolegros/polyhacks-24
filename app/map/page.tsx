@@ -42,10 +42,11 @@ function Map() {
       throw new Error('Google Network response was not ok');}
     const googleFarmers = await responseGoogle.json();
 
-    const farmersResponse = await fetch(`/api/farmers`);
+    const farmersResponse = await fetch(`/api/farmers=${latitude}&longitude=${longitude}`);
     if (!farmersResponse.ok) {
       throw new Error('Mongo Network response was not ok');}
     const farmers = await farmersResponse.json();
+
 
     const data = {
       places: [...googleFarmers.places, ...farmers]
