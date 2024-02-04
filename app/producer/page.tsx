@@ -36,8 +36,9 @@ const usePostToServerMutation = () => {
 
 const Producer = () => {
     const location = useGeolocation();
-    const [foods, setFoods] = useState<string[]>([]);
 
+    const [foods, setFoods] = useState<string[]>([]); 
+    
     const [foodInput, setFoodInput] = useState('');
     const [formData, setFormData] = useState<Producer>({
         name: '',
@@ -64,46 +65,53 @@ const Producer = () => {
         googleMapsApiKey: "AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU"
     });
 
+
     useEffect(() => {
         if (isLoaded && mapRef.current) {
             const map = new google.maps.Map(mapRef.current, {
-                center: {lat: location.latitude, lng: location.longitude},
+                center: { lat: location.latitude, lng: location.longitude },
                 zoom: 11,
             });
-
+    
             const geocoder = new google.maps.Geocoder();
             geocoderRef.current = geocoder;
+    
 
-            const marker = new google.maps.Marker({
-                position: {lat: location.latitude, lng: location.longitude},
-                map: map,
-            });
-
+            if (!markerRef.current) {
+                markerRef.current = new google.maps.Marker({
+                    position: { lat: location.latitude, lng: location.longitude },
+                    map: map,
+                });
+            }
+    
+            markerRef.current.setPosition({ lat: location.latitude, lng: location.longitude });
+    
             map.addListener('click', (event: google.maps.MapMouseEvent) => {
                 const latlng = event.latLng
                 if (latlng) {
-                    geocoder.geocode({location: event.latLng}, (results, status) => {
+                    geocoder.geocode({ location: event.latLng }, (results, status) => {
+                        
                         if (status === 'OK' && results && results[0]) {
                             const lat = latlng.lat();
                             const lng = latlng.lng();
-
+    
                             setFormData(currentFormData => ({
                                 ...currentFormData,
                                 formattedAddress: results[0].formatted_address,
-                                location: {lat, lng}
+                                location: { lat, lng }
                             }));
-                            if (marker) {
-                                marker.setPosition(event.latLng);
+    
+                            if (markerRef.current) {
+                                markerRef.current.setPosition(event.latLng);
                             }
                         }
                     });
                 }
             });
-
         }
-    }, [isLoaded, location, formData.location]);
-
-
+    }, [isLoaded, location]);
+    
+    
     const handleFoodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFoodInput(event.target.value);
     };
