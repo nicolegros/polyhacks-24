@@ -9,7 +9,7 @@ export default function About() {
 
       <h1 className="text-5xl text-sacramento font-bold mt-16 mx-8 pb-8"> From Farm to Fork</h1>
       <div className="px-8 text-sacramento text-lg italic mx-8">
-        "Food that is grown, raised, caught, or harvested, but never eaten, is considered to be food loss and waste. For example, a piece of fruit that is damaged during transport; food items in grocery stores that spoil before they can be sold; leftovers from a meal prepared at home that are not eaten; or food dishes prepared in a restaurant that are never served and are instead discarded. The term food loss applies from the point of maturity of a crop, finishing, catch, or harvest up to, but excluding, the retail stage; whereas food waste is applied to the retail and final food preparation and consumption stages."
+        &quot;Food that is grown, raised, caught, or harvested, but never eaten, is considered to be food loss and waste. For example, a piece of fruit that is damaged during transport; food items in grocery stores that spoil before they can be sold; leftovers from a meal prepared at home that are not eaten; or food dishes prepared in a restaurant that are never served and are instead discarded. The term food loss applies from the point of maturity of a crop, finishing, catch, or harvest up to, but excluding, the retail stage; whereas food waste is applied to the retail and final food preparation and consumption stages.&quot;
       </div>
       <p className="mx-8 pt-4 leading-tight text-sacramento text-lg text-right">
         Environment and Climate Change Canada (ECCC)
