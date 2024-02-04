@@ -1,13 +1,13 @@
 import Image from 'next/image'
 export default function Home() {
   return (
-    <div className="flex h-full">
-      <div className="h-full justify-end items-center flex">
+    <div className="flex h-full lg:flex-row flex-col-reverse justify-center items-center">
+      <div className="h-full lg:justify-end justify-center items-center flex">
         <div className="flex flex-col justify-end w-3/4">
-          <h1 className="text-7xl text-sacramento">GreenBasket</h1>
+          <h1 className="lg:text-7xl text-5xl text-sacramento max-lg:mt-4">GreenBasket</h1>
           <p className="py-8 text-sacramento text-md">
           To fight against food waste  and support local farmers, GreenBasket generates a map with all the local markets and businesses near you.          </p>
-          <div className="flex">
+          <div className="flex md:flex-row flex-col max-md:justify-center max-md:items-center">
             <button className="bg-pine
                                   text-lg
                                   hover:bg-tangerine
@@ -22,7 +22,7 @@ export default function Home() {
       </div>
       <div className="h-full w-full flex justify-center items-center">
         <Image
-          className="rounded-3xl"
+          className="md:rounded-3xl"
           src="/happy-farmer-cropped.jpg"
           width={600}
           height={600}
