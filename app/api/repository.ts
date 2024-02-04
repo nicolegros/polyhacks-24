@@ -1,5 +1,5 @@
+import clientPromise from "@/utils/mongo";
 import { OptionalId } from "mongodb";
-import clientPromise from "../lib/mongo";
 
 export class Repository {
 
