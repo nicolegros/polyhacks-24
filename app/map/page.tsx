@@ -10,11 +10,6 @@ import { CiMap, CiViewTable } from 'react-icons/ci';
 
 
 
-type LocationState = {
-  latitude: number;
-  longitude: number;
-};
-
 const containerStyle = {
   width: '100%',
   height: '100%'
@@ -107,24 +102,27 @@ function Map() {
         </div>
       ) : (
         isLoaded && (
-          <GoogleMap
+        <GoogleMap
             mapContainerStyle={containerStyle}
             center={location ? { lat: location.latitude, lng: location.longitude } : { lat: 0, lng: 0 }}
             zoom={13}
           >
-            <MarkerClusterer>
-              {(clusterer) =>
-                mensenData?.places.map((market: Market, index: number) => (
-                  <Marker
-                    key={index}
-                    position={market.location}
-                    label={market.displayName.text}
-                    onClick={() => setSelectedPlace(market)}
-                    clusterer={clusterer}
-                  />
-                ))
-              }
-            </MarkerClusterer>
+      <MarkerClusterer>
+        {(clusterer) => (
+          <>
+            {mensenData?.places.map((market: Market, index: number) => (
+              <Marker
+                key={index}
+                position={market.location}
+                label={market.displayName.text}
+                onClick={() => setSelectedPlace(market)}
+                clusterer={clusterer}
+              />
+            ))}
+          </>
+        )}
+      </MarkerClusterer>
+
 
             {selectedPlace && (
               <InfoWindow
@@ -137,10 +135,6 @@ function Map() {
                 <div>
                   <h2>{selectedPlace.displayName.text}</h2>
                   <p>{selectedPlace.formattedAddress}</p>
-                  {/*  */}
-                  <Link href={`/market/${selectedPlace.displayName.text}`} passHref>
-                    <a>More Info</a> {/* */}
-                  </Link>
                 </div>
               </InfoWindow>
             )}
