@@ -4,6 +4,7 @@ import {useEffect, useState, useRef} from 'react';
 import useGeolocation from '../hooks/geolocation';
 import {Producer} from '@/models/producer';
 import {useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters} from '@tanstack/react-query';
+import {Badge, Button, Input, InputGroup, InputRightAddon, Select, useToast} from "@chakra-ui/react";
 
 const postToServer = async (data: Producer): Promise<Producer> => {
     const response = await fetch('/api/endpoint', {
@@ -17,20 +18,6 @@ const postToServer = async (data: Producer): Promise<Producer> => {
         throw new Error('Network response was not ok');
     }
     return response.json();
-};
-
-const usePostToServerMutation = () => {
-    const queryClient = useQueryClient();
-
-    // @ts-ignore
-    return useMutation<Producer, unknown, unknown, unknown>((newProducer: Producer) => postToServer(newProducer), {
-        onSuccess: () => {
-            queryClient.invalidateQueries({queryKey: 'producers'} as unknown as InvalidateQueryFilters);
-        },
-        onError: (error: Error) => {
-            console.error('Error posting data:', error);
-        },
-    } as UseMutationOptions<unknown, Error, Producer, unknown>);
 };
 
 
@@ -64,7 +51,7 @@ const Producer = () => {
     const {isLoaded} = useJsApiLoader({
         googleMapsApiKey: "AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU"
     });
-
+    const toast = useToast()
 
     useEffect(() => {
         if (isLoaded && mapRef.current) {
@@ -148,14 +135,24 @@ const Producer = () => {
                 languageCode: '', 
             },
         });
+        setFoods([])
     };
     
 
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('submitting', formData);
-        resetForm();
+        postToServer(formData).then(response => {
+            resetForm();
+            toast({
+                title: 'Account created.',
+                description: "We've created your account for you.",
+                status: 'success',
+                duration: 9000,
+                isClosable: true,
+                position: 'top-right'
+            })
+        })
     };
 
 
@@ -170,54 +167,56 @@ const Producer = () => {
     
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h1>Tell us more about you!</h1>
-            <label>
-                Name:
-                <input type="text" name="name" value={formData.name} onChange={handleChange} required/>
-            </label>
-            <br/>
-            <label>
-                Email:
-                <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
 
-                />
-            </label>
-            <br/>
-            <label>
-                Address:
-                <input type="text" name="formattedAddress" value={formData.formattedAddress} onChange={handleChange}required />
-            </label>
-            <label>
-                Type:
-                <select name="types" value={formData.types[0] || ''} onChange={handleDropdownChange}required>
+        <form onSubmit={handleSubmit} >
+            <div className="mx-4 mb-8">
+                <div className="flex">
+                    <Input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange}
+                           required variant="filled" className="mr-4 mb-4"/>
+                    <Input type="email"
+                           name="email"
+                           placeholder="Email"
+                           value={formData.email}
+                           onChange={handleChange}
+                           variant="filled"
+                           required/>
+                </div>
+                <Input type="text" name="formattedAddress" placeholder="Address" value={formData.formattedAddress}
+                       onChange={handleChange} variant="filled" required className="mb-4"/>
+                <Select name="types" value={formData.types[0] || ''} onChange={handleDropdownChange} required
+                        variant="filled" className="mb-4">
                     <option value="">Select type</option>
                     <option value="greenhouse">Greenhouse</option>
                     <option value="farm">Farm</option>
                     <option value="market">Market</option>
-                </select>
+                </Select>
+                <div className="flex">
+                    <Input
+                        type="text"
+                        value={foodInput}
+                        onChange={handleFoodChange}
+                        variant="filled"
+                        placeholder="Enter what you produce here..."
+                        className="mb-2 mr-4"
+                    />
+                    <Button type="button" onClick={handleAddFood}>+</Button>
 
-            </label>
-            <br />
-            <input
-                type="text" 
-                value={foodInput} 
-                onChange={handleFoodChange} 
-                placeholder="Enter what you produce here..."
-            />
-            <button type="button" onClick={handleAddFood}>Add it</button>
-            <ul>
-                {foods.map((food, index) => (
-                    <li key={index}>{food}</li>
-                ))}
-            </ul>
-            <button type="submit">Submit</button>
-            <div ref={mapRef} style={{width: '100%', height: '400px'}}></div>
+                </div>
+                <div className="mb-4">
+                    {foods.map((food, index) => (
+                        <Badge key={index} className="mx-2">{food}</Badge>
+                    ))}
+                </div >
+                <button type="submit" className="bg-pine
+                                  hover:bg-tangerine
+                                  text-white
+                                  w-48
+                                  rounded-full
+                                  p-2">Submit
+                </button>
+
+            </div>
+            <div ref={mapRef} style={{width: '100%', height: '100%', position: "absolute"}}></div>
         </form>
     );
 };

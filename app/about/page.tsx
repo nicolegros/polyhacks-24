@@ -21,15 +21,15 @@ export default function About() {
       </h1>
 
 
-      <div className="flex justify-between items-center flex-row px-8 bg-chiffon">
-        <div className="aspect-square bg-sacramento text-salmon w-full h-full mr-8 p-4 flex justify-center items-center flex-col text-2xl text-center">
+      <div className="flex md:justify-between justify-center items-center md:flex-row flex-col px-8 bg-chiffon">
+        <div className="aspect-square bg-sacramento text-salmon w-full h-full md:mr-8 p-4 flex justify-center items-center flex-col text-2xl text-center">
           <span className="text-8xl">47%</span> of food waste is generated in households
         </div>
-        <div className="aspect-square bg-salmon w-full h-full mx-4 p-4 flex justify-center items-center flex-col text-2xl text-center text-sacramento">
+        <div className="aspect-square bg-salmon w-full h-full md:mx-4 p-4 flex justify-center items-center flex-col text-2xl text-center text-sacramento">
           <span className="text-8xl">60%</span> of food waste occurs during production
         </div>
-        <div className="aspect-square bg-sacramento w-full h-full ml-8 p-4 flex justify-center items-center flex-col text-2xl text-center text-salmon">
-          <span className="text-8xl">56.5<span className="text-6xl">M</span></span>tons of CO2 emissions created annually
+        <div className="aspect-square bg-sacramento w-full h-full md:ml-8 p-4 flex justify-center items-center flex-col text-2xl text-center text-salmon">
+          <span className="lg:text-8xl text-7xl">56.5<span className="lg:text-6xl text-5xl">M</span></span>tons of CO2 emissions created annually
         </div>
       </div>
 
@@ -38,7 +38,7 @@ export default function About() {
         <h1 className="text-5xl text-sacramento font-bold mt-16 mx-8">Other resources</h1>
 
         <div className="flex">
-          <button className="mx-8 mt-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://lepanierbleu.ca/">Le panier bleu</a></button>
+          <button className="mx-8 mt-8 text-lg text-sacramento font-bold hover:text-tangerine underline"><a href="https://lepanierbleu.ca/">Le panier bleu</a></button>
         </div>
 
         <div className="flex">
@@ -47,7 +47,7 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <button className="mx-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://www.toogoodtogo.com">Too Good To Go</a></button>
+          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline"><a href="https://www.toogoodtogo.com">Too Good To Go</a></button>
         </div>
         <div className="flex">
           <p className="px-8 pb-8 text-sacramento text-lg">Too Good To Go has an ambitious goal: to inspire and empower everyone to fight food waste. The problem is simple: too much food is being thrown away. Rescue unsold fresh food from an untimely fate at your favourite spots. Download the app today, reduce food waste while saving your wallet!
@@ -55,12 +55,11 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <button className="mx-8 text-lg text-pine font-bold hover:text-tangerine underline"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">En apprendre plus sur le gaspillage alimentaire</a></button>
+          <button className="mx-8 text-lg text-sacramento font-bold hover:text-tangerine underline text-start"><a href="https://www.recyc-quebec.gouv.qc.ca/citoyens/mieux-consommer/gaspillage-alimentaire/">Learn more about food waste</a></button>
         </div>
 
         <div className="flex">
-          <p className="px-8 pb-8 text-sacramento text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          </p>
+          <p className="px-8 pb-8 text-sacramento text-lg">What to do with your wastes? In their new campaign, RECYC-QUÉBEC presents resources to plan, conserve and maximize your food better.</p>
         </div>
       </div>
     </div>
