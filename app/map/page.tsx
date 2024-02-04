@@ -23,6 +23,8 @@ const containerStyle = {
 const queryClient = new QueryClient()
 
 export default function MapWrapper() {
+  const queryClient = new QueryClient();
+
   return (
     <QueryClientProvider client={queryClient}>
       <Map />
@@ -40,15 +42,26 @@ function Map() {
 
 
   const fetchFromServer = async (latitude: number, longitude: number) => {
-    const response = await fetch(`/api?latitude=${latitude}&longitude=${longitude}`);
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    const data = await response.json();
+    const responseGoogle = await fetch(`/api?latitude=${latitude}&longitude=${longitude}`);
+    if (!responseGoogle.ok) {
+      throw new Error('Google Network response was not ok');}
+    const dataGoogle = await responseGoogle.json();
+    
+    const responseMongo = await fetch(`/api/farmers`);
+    if (!responseMongo.ok) {
+      throw new Error('Mongo Network response was not ok');}
+    const dataMongo = await responseMongo.json();
+    
+    const data = {
+      places: [...dataGoogle.places, ...dataMongo.places]
+    };
+    const filterPlaces = (places: Market[]) => {
+      return places.filter((place) => place.location && place.location.lat !== 0 && place.location.lng !== 0);
+    };
     data.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
-
     return data;
   };
+
 
 
   const { data: mensenData } = useQuery({
