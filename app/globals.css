@@ -32,6 +32,8 @@ body {
   }
 }
 
-.main {
-  color: rgb(var(--foreground-rgb));
+.img-background {
+  background-image: url("../public/supermarket.jpg");
+  background-size: cover;
+  background-position: center center;
 }
