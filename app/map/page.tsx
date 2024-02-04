@@ -2,11 +2,11 @@
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
 import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from "@react-google-maps/api";
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Market } from '@/models/market';
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Switch, Icon } from '@chakra-ui/react'
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Icon, Switch } from '@chakra-ui/react'
+import useGeolocation from '../hooks/geolocation';
 import { CiMap, CiViewTable } from 'react-icons/ci';
-import { GoTable } from 'react-icons/go';
 
 
 
@@ -33,24 +33,10 @@ export default function MapWrapper() {
 function Map() {
   const [showTable, setShowTable] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<Market | null>(null);
-  const [location, setLocation] = useState<LocationState | null>(null);
+  const location = useGeolocation();
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: 'AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU'
   });
-
-  useEffect(() => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
-          const { latitude, longitude } = coords;
-          setLocation({ latitude, longitude });
-        },
-        (err) => {
-          console.error('Error obtaining location:', err);
-        }
-      );
-    }
-  }, []);
 
 
   const fetchFromServer = async (latitude: number, longitude: number) => {
@@ -67,11 +53,15 @@ function Map() {
 
   const { data: mensenData } = useQuery({
     queryKey: ['mensenData', location],
-    queryFn: () => fetchFromServer(location!.latitude, location!.longitude),
-    enabled: !!location
+      queryFn: () => {
+          if (location.latitude !== null && location.longitude !== null) {
+              return fetchFromServer(location.latitude, location.longitude);
+          }
+      },
+      enabled: location.latitude !== null && location.longitude !== null
   });
-
   return (
+      <QueryClientProvider client={queryClient}>
     <div className="flex h-full flex-col items-start justify-start p-8 pt-4">
       <span className="pb-4">
         <Icon as={CiMap} boxSize="2em" />
@@ -143,5 +133,6 @@ function Map() {
         )
       )}
     </div>
+      </QueryClientProvider>
   );
 }
