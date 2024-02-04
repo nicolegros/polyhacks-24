@@ -6,7 +6,7 @@ import {Producer} from '@/models/producer';
 import {useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters} from '@tanstack/react-query';
 
 const postToServer = async (data: Producer): Promise<Producer> => {
-    const response = await fetch('/api/endpoint', {
+    const response = await fetch('/api/farmers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -146,7 +146,7 @@ const Producer = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log('submitting', formData);
+        postToServer(formData)
         resetForm();
     };
 
