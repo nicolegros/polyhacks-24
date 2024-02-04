@@ -2,7 +2,7 @@
 import {useJsApiLoader} from "@react-google-maps/api";
 import {useEffect, useState, useRef} from 'react';
 import useGeolocation from '../hooks/geolocation';
-import {Producer} from '../../models/producer';
+import {Producer} from '@/models/producer';
 import {useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters} from '@tanstack/react-query';
 
 const postToServer = async (data: Producer): Promise<Producer> => {
