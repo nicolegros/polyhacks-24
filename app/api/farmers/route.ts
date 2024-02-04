@@ -6,7 +6,7 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   if (!isValidData(body)) {
-    return NextResponse.json({ error: 'Invalid data format' });
+    return NextResponse.json({ error: 'Invalid data format' }, { status: 400 });
   }
 
   const response = repo.create(body)
