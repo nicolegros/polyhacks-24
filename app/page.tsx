@@ -4,10 +4,9 @@ export default function Home() {
     <div className="flex h-full">
       <div className="h-full justify-end items-center flex">
         <div className="flex flex-col justify-end w-3/4">
-          <h1 className="text-7xl text-sacramento">Slogan</h1>
+          <h1 className="text-7xl text-sacramento">GreenBasket</h1>
           <p className="py-8 text-sacramento text-md">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          </p>
+          To fight against food waste  and support local farmers, GreenBasket generates a map with all the local markets and businesses near you.          </p>
           <div className="flex">
             <button className="bg-pine
                                   text-lg
@@ -22,7 +21,7 @@ export default function Home() {
                                   text-white
                                   w-48
                                   rounded-full
-                                  p-4"><a href="/producer">I'm a producer!</a></button>
+                                  p-4"><a href="/producer">I&apos;m a producer!</a></button>
             <button className="mx-8 text-lg text-sacramento hover:text-tangerine underline"><a href="/about">More information</a></button>
           </div>
         </div>

@@ -1,43 +1,43 @@
 'use client';
-import { useJsApiLoader } from "@react-google-maps/api";
-import { useEffect, useState, useRef } from 'react';
+import {useJsApiLoader} from "@react-google-maps/api";
+import {useEffect, useState, useRef} from 'react';
 import useGeolocation from '../hooks/geolocation';
-import { Producer } from '../../models/producer';
-import { useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters } from '@tanstack/react-query';
+import {Producer} from '@/models/producer';
+import {useMutation, useQueryClient, UseMutationOptions, InvalidateQueryFilters} from '@tanstack/react-query';
 
-const postToServer = async (data:Producer):Promise<Producer> => {
+const postToServer = async (data: Producer): Promise<Producer> => {
     const response = await fetch('/api/endpoint', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
     });
     if (!response.ok) {
-      throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok');
     }
     return response.json();
 };
 
 const usePostToServerMutation = () => {
     const queryClient = useQueryClient();
-    
-    return useMutation<unknown, Error, Producer, unknown>((newProducer: Producer) => postToServer(newProducer), {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: 'producers' } as InvalidateQueryFilters);
-      },
-      onError: (error: Error) => {
-        console.error('Error posting data:', error);
-      },
+
+    // @ts-ignore
+    return useMutation<Producer, unknown, unknown, unknown>((newProducer: Producer) => postToServer(newProducer), {
+        onSuccess: () => {
+            queryClient.invalidateQueries({queryKey: 'producers'} as unknown as InvalidateQueryFilters);
+        },
+        onError: (error: Error) => {
+            console.error('Error posting data:', error);
+        },
     } as UseMutationOptions<unknown, Error, Producer, unknown>);
 };
 
 
 const Producer = () => {
     const location = useGeolocation();
+    const [foods, setFoods] = useState<string[]>([]);
 
-    const [foods, setFoods] = useState<string[]>([]); 
-    
     const [foodInput, setFoodInput] = useState('');
     const [formData, setFormData] = useState<Producer>({
         name: '',
@@ -60,73 +60,68 @@ const Producer = () => {
     formData.location= { lat:location.latitude, lng:location.longitude };
 
 
-    const { isLoaded } = useJsApiLoader({
+    const {isLoaded} = useJsApiLoader({
         googleMapsApiKey: "AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU"
     });
 
-   useEffect(() => {
-    if (isLoaded && mapRef.current) {
-        const map = new google.maps.Map(mapRef.current, {
-            center: { lat: location.latitude, lng: location.longitude },
-            zoom: 11,
-        });
+    useEffect(() => {
+        if (isLoaded && mapRef.current) {
+            const map = new google.maps.Map(mapRef.current, {
+                center: {lat: location.latitude, lng: location.longitude},
+                zoom: 11,
+            });
 
-        const geocoder = new google.maps.Geocoder();
-        geocoderRef.current = geocoder;
-        
-        if (!markerRef.current) {
-            markerRef.current = new google.maps.Marker({
-                position: { lat: location.latitude, lng: location.longitude },
+            const geocoder = new google.maps.Geocoder();
+            geocoderRef.current = geocoder;
+
+            const marker = new google.maps.Marker({
+                position: {lat: location.latitude, lng: location.longitude},
                 map: map,
             });
-        } else {
-            markerRef.current.setPosition({ lat: location.latitude, lng: location.longitude });
-            markerRef.current.setMap(map);
-        }
 
-        map.addListener('click', (event: google.maps.MapMouseEvent) => {
-            if (event.latLng) {
-                geocoder.geocode({ location: event.latLng }, (results, status) => {
-                    if (status === 'OK' && results && results[0]) {
-                        const lat = event.latLng.lat();
-                        const lng = event.latLng.lng();
-        
-                        setFormData(currentFormData => ({
-                            ...currentFormData,
-                            formattedAddress: results[0].formatted_address,
-                            location: { lat, lng }
-                        }));
+            map.addListener('click', (event: google.maps.MapMouseEvent) => {
+                const latlng = event.latLng
+                if (latlng) {
+                    geocoder.geocode({location: event.latLng}, (results, status) => {
+                        if (status === 'OK' && results && results[0]) {
+                            const lat = latlng.lat();
+                            const lng = latlng.lng();
 
-                        if (markerRef.current) {
-                            markerRef.current.setPosition(event.latLng);
+                            setFormData(currentFormData => ({
+                                ...currentFormData,
+                                formattedAddress: results[0].formatted_address,
+                                location: {lat, lng}
+                            }));
+                            if (marker) {
+                                marker.setPosition(event.latLng);
+                            }
                         }
-                    }
-                });
-            }
-        });
-    }
-}, [isLoaded, location.latitude, location.longitude]);
-    
-    
+                    });
+                }
+            });
+
+        }
+    }, [isLoaded, location, formData.location]);
+
+
     const handleFoodChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFoodInput(event.target.value);
     };
-    
+
 
     const handleAddFood = () => {
-        if (foodInput) { 
+        if (foodInput) {
             setFoods(prevFoods => [...prevFoods, foodInput]);
-            setFormData(prevFormData => ({ ...prevFormData, product: [...prevFormData.product, foodInput] }));
-            setFoodInput(''); 
+            setFormData(prevFormData => ({...prevFormData, product: [...prevFormData.product, foodInput]}));
+            setFoodInput('');
 
         }
     };
-    
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData(prevFormData => ({ ...prevFormData, [name]: value }));
-
+        const {name, value} = e.target;
+        setFormData(prevFormData => ({...prevFormData, [name]: value}));
     };
 
     const resetForm = () => {
@@ -173,7 +168,7 @@ const Producer = () => {
                 Name:
                 <input type="text" name="name" value={formData.name} onChange={handleChange} required/>
             </label>
-            <br />
+            <br/>
             <label>
                 Email:
                 <input
@@ -185,7 +180,7 @@ const Producer = () => {
 
                 />
             </label>
-            <br />
+            <br/>
             <label>
                 Address:
                 <input type="text" name="formattedAddress" value={formData.formattedAddress} onChange={handleChange}required />
@@ -214,7 +209,7 @@ const Producer = () => {
                 ))}
             </ul>
             <button type="submit">Submit</button>
-            <div ref={mapRef} style={{ width: '100%', height: '400px' }}></div>
+            <div ref={mapRef} style={{width: '100%', height: '400px'}}></div>
         </form>
     );
 };
