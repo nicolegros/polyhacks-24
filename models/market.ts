@@ -14,4 +14,5 @@ export interface Market {
     text: string;
     languageCode: string;
   }
+  distance: number;
 }
