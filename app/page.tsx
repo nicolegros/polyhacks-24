@@ -16,6 +16,13 @@ export default function Home() {
                                   w-48
                                   rounded-full
                                   p-4"><a href="/map">Find local markets</a></button>
+            <button className="bg-pine
+                                  text-lg
+                                  hover:bg-tangerine
+                                  text-white
+                                  w-48
+                                  rounded-full
+                                  p-4"><a href="/producer">I'm a producer!</a></button>
             <button className="mx-8 text-lg text-sacramento hover:text-tangerine underline"><a href="/about">More information</a></button>
           </div>
         </div>

@@ -7,14 +7,10 @@ import { useState, useEffect } from 'react';
 import { Market } from '@/models/market';
 import { useNavigate,BrowserRouter } from 'react-router-dom';
 import {Table, Thead,Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from '@chakra-ui/react'
+import useGeolocation from '../hooks/geolocation';
 //import { MarkerClusterer } from "@react-google-maps/marker-clusterer";
 
 
-
-type LocationState = {
-  latitude: number;
-  longitude: number;
-};
 
 const containerStyle = {
   width: '100%',
@@ -34,24 +30,11 @@ export default function MapWrapper() {
   function Map() {
     const [showTable, setShowTable] = useState(false);
     const [selectedPlace, setSelectedPlace] = useState<Market | null>(null);
-    const [location, setLocation] = useState<LocationState | null>(null);
+    const location = useGeolocation(); 
     const { isLoaded } = useJsApiLoader({
       googleMapsApiKey: 'AIzaSyBBQreN_MQQtFOgQToOH3nkqTx7nPLvpPU'
     });
-  
-    useEffect(() => {
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          ({ coords }) => {
-            const { latitude, longitude } = coords;
-            setLocation({ latitude, longitude });
-          },
-          (err) => {
-            console.error('Error obtaining location:', err);
-          }
-        );
-      }
-    }, []);
+
   
 
     const fetchFromServer = async (latitude: number, longitude: number) => {
@@ -65,12 +48,16 @@ export default function MapWrapper() {
       return data;
     };
 
-  
     const { isLoading, error, data: mensenData } = useQuery({
       queryKey: ['mensenData', location], 
-      queryFn: () => fetchFromServer(location!.latitude, location!.longitude), 
-      enabled: !!location
+      queryFn: () => {
+        if (location.latitude !== null && location.longitude !== null) {
+          return fetchFromServer(location.latitude, location.longitude);
+        }
+      },
+      enabled: location.latitude !== null && location.longitude !== null
     });
+    
     
       return (
         <QueryClientProvider client={queryClient}>
