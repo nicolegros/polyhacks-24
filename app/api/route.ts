@@ -1,38 +1,32 @@
-import axios from "axios";
+import { AxiosError } from "axios";
 import { NextRequest, NextResponse } from "next/server"
+import { GoogleAdapter } from "./google-adapter";
+import { NearbyMarkets } from "@/models/market";
 
 export async function GET(request: NextRequest) {
-  const response = await axios.post('https://places.googleapis.com/v1/places:searchNearby',
-    {
-      includedTypes: [
-        "market"
-      ],
-      maxResultCount: 10,
-      locationRestriction: {
-        circle: {
-          center: {
-            latitude: 45.5049006,
-            longitude: -73.6146601
-          },
-          radius: 5000.0
-        }
-      }
-    },
-    {
-      headers: {
-        'X-Goog-Api-Key': process.env.GOOGLE_API_KEY,
-        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.types'
-      },
-    })
-
-
   const searchParams = request.nextUrl.searchParams
-  return NextResponse.json(response.data)
+  const latitude = searchParams.get("latitude") ?? "45.5049006";
+  const longitude = searchParams.get("longitude") ?? "-73.6146601";
+  const radius: string = searchParams.get("radius") ?? "5000.0";
+  let response: NearbyMarkets;
+  try {
+    response = await new GoogleAdapter().getNearbyMarkets(
+      parseFloat(latitude),
+      parseFloat(longitude),
+      parseFloat(radius))
+  } catch (error: unknown) {
+    console.log(`Call to Google's API failed with error: ${error}`);
+    return NextResponse.json({ error: (error as AxiosError).message }, {
+      status: 500
+    })
+  }
+
+    return NextResponse.json(response)
 }
 
-export async function POST(request: NextRequest) {
-  const body = await request.json();
-  return NextResponse.json({
-    message: body
-  })
-}
+  export async function POST(request: NextRequest) {
+    const body = await request.json();
+    return NextResponse.json({
+      message: body
+    })
+  }
