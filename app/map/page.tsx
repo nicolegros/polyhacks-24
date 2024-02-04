@@ -4,7 +4,9 @@ import { GoogleMap, InfoWindow, Marker, useJsApiLoader } from "@react-google-map
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Market } from '@/models/market';
-import { Table, Thead, Tbody, Tr, Th, Td, TableContainer } from '@chakra-ui/react'
+import { Table, Thead, Tbody, Tr, Th, Td, TableContainer, Switch, Icon } from '@chakra-ui/react'
+import { CiMap, CiViewTable } from 'react-icons/ci';
+import { GoTable } from 'react-icons/go';
 
 
 
@@ -15,7 +17,7 @@ type LocationState = {
 
 const containerStyle = {
   width: '100%',
-  height: '400px'
+  height: '100%'
 };
 
 const queryClient = new QueryClient()
@@ -63,80 +65,83 @@ function Map() {
   };
 
 
-  const { isLoading, error, data: mensenData } = useQuery({
+  const { data: mensenData } = useQuery({
     queryKey: ['mensenData', location],
     queryFn: () => fetchFromServer(location!.latitude, location!.longitude),
     enabled: !!location
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col items-center justify-between p-24">
-        <h1>Nearby Market</h1>
-        <p>Find local producer near you!</p>
-        <button onClick={() => setShowTable(!showTable)}>
-          {showTable ? 'Show Map' : 'Show Table'}
-        </button>
-        {showTable ? (
-          <TableContainer>
-            <Table variant="simple">
+    <div className="flex h-full flex-col items-start justify-start p-8 pt-4">
+      <span className="pb-4">
+        <Icon as={CiMap} boxSize="2em" />
+        <Switch onChange={() => setShowTable(!showTable)} size="lg" />
+        <Icon as={CiViewTable} boxSize="2em" />
+      </span>
+      {showTable ? (
+        <div className="flex justify-center align-middle w-full">
+          <TableContainer className="bg-white w-full">
+            <Table variant="striped" size="sm" overflowY="scroll" whiteSpace="wrap">
               <Thead>
                 <Tr>
                   <Th>Name</Th>
                   <Th>Address</Th>
-                  <Th>distance</Th>
-
+                  <Th>Distance</Th>
                 </Tr>
               </Thead>
               <Tbody>
-                {mensenData?.places.map((market: Market, index: number) => (
+                {mensenData?.places.map((market: Market, index: number) => {
+                  const name = market.displayName.text;
+                  return (
                   <Tr key={index}>
-                    <Td>{market.displayName.text}</Td>
+                    <Td>{name}</Td>
                     <Td>{market.formattedAddress}</Td>
                     <Td>{market.distance} km</Td>
                   </Tr>
-                ))}
+                )
+
+                })}
               </Tbody>
             </Table>
           </TableContainer>
-        ) : (
-          isLoaded && (
-            <GoogleMap
-              mapContainerStyle={containerStyle}
-              center={location ? { lat: location.latitude, lng: location.longitude } : { lat: 0, lng: 0 }}
-              zoom={11}
-            >
-              {mensenData?.places.map((market: Market, index: number) => (
-                <Marker
-                  key={index}
-                  position={market.location}
-                  label={market.displayName.text}
-                  onClick={() => setSelectedPlace(market)}
-                />
-              ))}
+        </div>
+      ) : (
+        isLoaded && (
+          <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={location ? { lat: location.latitude, lng: location.longitude } : { lat: 0, lng: 0 }}
+            zoom={13}
+          >
+            {mensenData?.places.map((market: Market, index: number) => (
+              <Marker
+                key={index}
+                position={market.location}
+                label={market.displayName.text}
+                onClick={() => setSelectedPlace(market)}
+              />
+            ))}
 
-              {selectedPlace && (
-                <InfoWindow
-                  position={{
-                    lat: selectedPlace.location.lat,
-                    lng: selectedPlace.location.lng
-                  }}
-                  onCloseClick={() => setSelectedPlace(null)}
-                >
-                  <div>
-                    <h2>{selectedPlace.displayName.text}</h2>
-                    <p>{selectedPlace.formattedAddress}</p>
-                    {/*  */}
-                    <Link href={`/market/${selectedPlace.displayName.text}`} passHref>
-                      <a>More Info</a> {/* */}
-                    </Link>
-                  </div>
-                </InfoWindow>
-              )}
-            </GoogleMap>
-          )
-        )}
-      </div>
-    </QueryClientProvider>
+            {selectedPlace && (
+              <InfoWindow
+                position={{
+                  lat: selectedPlace.location.lat,
+                  lng: selectedPlace.location.lng
+                }}
+                onCloseClick={() => setSelectedPlace(null)}
+              >
+                <div>
+                  <h2>{selectedPlace.displayName.text}</h2>
+                  <p>{selectedPlace.formattedAddress}</p>
+                  {/*  */}
+                  <Link href={`/market/${selectedPlace.displayName.text}`} passHref>
+                    <a>More Info</a> {/* */}
+                  </Link>
+                </div>
+              </InfoWindow>
+            )}
+          </GoogleMap>
+        )
+      )}
+    </div>
   );
 }
