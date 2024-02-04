@@ -59,8 +59,7 @@ export default function About() {
         </div>
 
         <div className="flex">
-          <p className="px-8 pb-8 text-sacramento text-lg">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
-          </p>
+          <p className="px-8 pb-8 text-sacramento text-lg">What to do with your wastes? In their new campaign, RECYC-QUÉBEC presents resources to plan, conserve and maximize your food better.</p>
         </div>
       </div>
     </div>
