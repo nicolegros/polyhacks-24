@@ -45,18 +45,15 @@ function Map() {
     const responseGoogle = await fetch(`/api?latitude=${latitude}&longitude=${longitude}`);
     if (!responseGoogle.ok) {
       throw new Error('Google Network response was not ok');}
-    const dataGoogle = await responseGoogle.json();
-    
-    const responseMongo = await fetch(`/api/farmers`);
-    if (!responseMongo.ok) {
+    const googleFarmers = await responseGoogle.json();
+
+    const farmersResponse = await fetch(`/api/farmers`);
+    if (!farmersResponse.ok) {
       throw new Error('Mongo Network response was not ok');}
-    const dataMongo = await responseMongo.json();
-    
+    const farmers = await farmersResponse.json();
+
     const data = {
-      places: [...dataGoogle.places, ...dataMongo.places]
-    };
-    const filterPlaces = (places: Market[]) => {
-      return places.filter((place) => place.location && place.location.lat !== 0 && place.location.lng !== 0);
+      places: [...googleFarmers.places, ...farmers]
     };
     data.places.sort((a: { distance: number }, b: { distance: number }) => a.distance - b.distance);
     return data;
