@@ -3,10 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 220, 223, 218;
-  --background-start-rgb: 144, 238, 144; /* Light Green */
-  --background-end-rgb: 0, 128, 0; /* Dark Green */
-  --grey-color: 200, 214, 218;
+  --light-grey: 220, 223, 218;  
+  --lightest-green: 200, 214, 218;
+  --light-green : 183, 206, 102;
+  --apple-green : 143, 180, 58;
+  --dark-grey : 75, 89, 67;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -22,9 +23,9 @@ body {
   background: linear-gradient(
       to bottom,
       transparent,
-      rgb(var(--background-end-rgb))
+      rgb(var(--light-green))
     )
-    rgb(var(--background-start-rgb));
+    rgb(var(--apple-green));
 }
 
 @layer utilities {
@@ -34,5 +35,5 @@ body {
 }
 
 .main {
-  color: rgb(var(--foreground-rgb));
+  color: rgb(var());
 }
